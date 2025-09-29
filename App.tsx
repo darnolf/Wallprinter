@@ -15,7 +15,6 @@ import SavedImages, { SavedImage } from './components/SavedImages';
 import SavedImageViewerModal from './components/SavedImageViewerModal';
 import SceneEditor from './components/SceneEditor';
 import SceneEditPreviewModal from './components/SceneEditPreviewModal';
-import SettingsModal from './components/SettingsModal'; // New Import
 import { Artwork, PlacementArea } from './types';
 import { generateMuralOnScene, editSceneWithPrompt } from './services/geminiService';
 
@@ -49,18 +48,6 @@ function App() {
   const [editedScenePreviewUrl, setEditedScenePreviewUrl] = useState<string | null>(null);
   const [editedSceneFile, setEditedSceneFile] = useState<File | null>(null);
   const [isEditPreviewModalOpen, setIsEditPreviewModalOpen] = useState<boolean>(false);
-
-  // New state for Settings and API Key
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState<boolean>(false);
-  const [pexelsApiKey, setPexelsApiKey] = useState<string>('');
-
-  useEffect(() => {
-    // Load API key from local storage on initial mount
-    const storedKey = localStorage.getItem('pexelsApiKey');
-    if (storedKey) {
-      setPexelsApiKey(storedKey);
-    }
-  }, []);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -297,16 +284,10 @@ function App() {
     setIsImageViewerOpen(true);
   };
 
-  const handleSaveApiKey = (key: string) => {
-    setPexelsApiKey(key);
-    localStorage.setItem('pexelsApiKey', key);
-    setIsSettingsModalOpen(false);
-  };
-
   return (
     <div className="bg-zinc-50 dark:bg-zinc-900 min-h-screen font-sans" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
       <div className="container mx-auto px-4 py-8">
-        <Header theme={theme} onToggleTheme={toggleTheme} onOpenSettings={() => setIsSettingsModalOpen(true)} />
+        <Header theme={theme} onToggleTheme={toggleTheme} />
         
         <main className="mt-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -419,7 +400,6 @@ function App() {
         isOpen={isAddArtworkModalOpen}
         onClose={() => setIsAddArtworkModalOpen(false)}
         onAddArtwork={handleAddArtwork}
-        pexelsApiKey={pexelsApiKey}
       />
       
       <DebugModal
@@ -446,13 +426,6 @@ function App() {
         onClose={handleDiscardSceneEdit}
       />
       
-      <SettingsModal
-        isOpen={isSettingsModalOpen}
-        onClose={() => setIsSettingsModalOpen(false)}
-        onSave={handleSaveApiKey}
-        currentApiKey={pexelsApiKey}
-      />
-
       <TouchGhost 
         imageUrl={touchGhost.imageUrl}
         position={touchGhost.position}

@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
+import { PEXELS_API_KEY } from '../env';
+
 export interface PexelsImage {
     id: number;
     width: number;
@@ -37,12 +39,12 @@ interface PexelsResponse {
 /**
  * Searches for images on Pexels using the provided query.
  * @param query The search term.
- * @param apiKey Your Pexels API key.
  * @returns A promise that resolves to an array of PexelsImage objects.
  */
-export const searchImages = async (query: string, apiKey: string): Promise<PexelsImage[]> => {
-    if (!apiKey) {
-        throw new Error("Pexels API key is not provided.");
+export const searchImages = async (query: string): Promise<PexelsImage[]> => {
+    const apiKey = PEXELS_API_KEY;
+    if (!apiKey || apiKey === 'YOUR_PEXELS_API_KEY_HERE') {
+        throw new Error("Pexels API key is not configured. Please add your key to the env.ts file.");
     }
 
     const API_URL = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=15`;

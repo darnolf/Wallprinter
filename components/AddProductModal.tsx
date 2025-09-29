@@ -7,12 +7,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { generateArtworkFromPrompt } from '../services/geminiService';
 import { searchImages, PexelsImage } from '../services/imageSearchService';
 import Spinner from './Spinner';
+import { PEXELS_API_KEY } from '../env';
 
 interface AddProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddArtwork: (name: string, file: File) => void;
-  pexelsApiKey: string;
 }
 
 type ActiveTab = 'upload' | 'generate' | 'search';
@@ -35,7 +35,7 @@ const SearchIcon: React.FC = () => (
     </svg>
 );
 
-const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAddArtwork, pexelsApiKey }) => {
+const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAddArtwork }) => {
   const [artworkName, setArtworkName] = useState('');
   const [artworkFile, setArtworkFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -55,6 +55,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [selectedPexelsImage, setSelectedPexelsImage] = useState<PexelsImage | null>(null);
+
+  const isPexelsConfigured = PEXELS_API_KEY && PEXELS_API_KEY !== 'YOUR_PEXELS_API_KEY_HERE';
 
   // Reset state when modal is opened/closed
   useEffect(() => {
@@ -128,8 +130,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
   };
 
   const executeSearch = async () => {
-    if (!searchQuery.trim() || !pexelsApiKey) {
-        setSearchError("Please enter a search term and ensure your Pexels API key is set in Settings.");
+    if (!searchQuery.trim()) {
+        setSearchError("Please enter a search term.");
         return;
     }
     
@@ -138,7 +140,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
     setSearchResults([]);
 
     try {
-        const results = await searchImages(searchQuery, pexelsApiKey);
+        const results = await searchImages(searchQuery);
         setSearchResults(results);
         if (results.length === 0) {
             setSearchError("No results found. Try a different search term.");
@@ -301,46 +303,59 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             </div>
 
             <div className={activeTab === 'search' ? 'block space-y-4' : 'hidden'} role="tabpanel">
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                                e.preventDefault();
-                                executeSearch();
-                            }
-                        }}
-                        placeholder="Search for photos on Pexels..."
-                        className="flex-grow px-3 py-2 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button 
-                        type="button" 
-                        onClick={executeSearch} 
-                        disabled={isSearching || !pexelsApiKey} 
-                        className="bg-blue-600 text-white font-bold p-2 rounded-lg shadow-md hover:bg-blue-700 disabled:bg-blue-400"
-                    >
-                       <SearchIcon />
-                    </button>
-                </div>
-                {searchError && <p className="text-sm text-red-600 animate-fade-in">{searchError}</p>}
-                {isSearching && <div className="flex justify-center py-8"><Spinner /></div>}
-                <div className="grid grid-cols-3 gap-2">
-                    {searchResults.map(image => (
-                        <button
-                            type="button"
-                            key={image.id}
-                            onClick={() => handlePexelsImageSelect(image)}
-                            className={`aspect-square rounded-md overflow-hidden transition-all focus:outline-none ${selectedPexelsImage?.id === image.id ? 'ring-4 ring-blue-500 scale-105' : 'hover:scale-105 focus:ring-4 focus:ring-blue-500'}`}
-                        >
-                            <img src={image.src.tiny} alt={image.alt} className="w-full h-full object-cover" />
-                        </button>
-                    ))}
-                </div>
+                {!isPexelsConfigured ? (
+                    <div className="text-center p-4 bg-zinc-100 dark:bg-zinc-700/50 rounded-lg">
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                            The image search feature is disabled.
+                        </p>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
+                            To enable it, please add your Pexels API key to the <code>env.ts</code> file.
+                        </p>
+                    </div>
+                ) : (
+                    <>
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        executeSearch();
+                                    }
+                                }}
+                                placeholder="Search for photos on Pexels..."
+                                className="flex-grow px-3 py-2 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button 
+                                type="button" 
+                                onClick={executeSearch} 
+                                disabled={isSearching || !searchQuery.trim()} 
+                                className="bg-blue-600 text-white font-bold p-2 rounded-lg shadow-md hover:bg-blue-700 disabled:bg-blue-400"
+                            >
+                               <SearchIcon />
+                            </button>
+                        </div>
+                        {searchError && <p className="text-sm text-red-600 animate-fade-in">{searchError}</p>}
+                        {isSearching && <div className="flex justify-center py-8"><Spinner /></div>}
+                        <div className="grid grid-cols-3 gap-2">
+                            {searchResults.map(image => (
+                                <button
+                                    type="button"
+                                    key={image.id}
+                                    onClick={() => handlePexelsImageSelect(image)}
+                                    className={`aspect-square rounded-md overflow-hidden transition-all focus:outline-none ${selectedPexelsImage?.id === image.id ? 'ring-4 ring-blue-500 scale-105' : 'hover:scale-105 focus:ring-4 focus:ring-blue-500'}`}
+                                >
+                                    <img src={image.src.tiny} alt={image.alt} className="w-full h-full object-cover" />
+                                </button>
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
             
-            {(previewUrl || isGenerating) && (
+            {(previewUrl || isGenerating) && activeTab !== 'upload' && (
               <div className="w-full aspect-video bg-zinc-100 dark:bg-zinc-700/50 border-2 border-dashed rounded-lg flex items-center justify-center transition-colors duration-300 relative overflow-hidden flex-shrink-0">
                 {isGenerating && (
                   <div className="absolute inset-0 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm flex flex-col items-center justify-center z-10">
