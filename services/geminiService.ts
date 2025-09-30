@@ -104,11 +104,11 @@ const createPreCompositeImage = async (artworkFile: File, sceneFile: File, place
 };
 
 export const generateMuralOnScene = async (artworkFile: File, sceneFile: File, placementArea: PlacementArea) => {
-    const VITE_API_KEY = import.meta.env?.VITE_API_KEY;
-    if (!VITE_API_KEY || VITE_API_KEY === 'YOUR_API_KEY_HERE') {
-        throw new Error("VITE_API_KEY environment variable not set. Please create a .env file and add VITE_API_KEY=YOUR_API_KEY.");
+    const VITE_GEMINI_API_KEY = import.meta.env?.VITE_GEMINI_API_KEY;
+    if (!VITE_GEMINI_API_KEY || VITE_GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+        throw new Error("VITE_GEMINI_API_KEY environment variable not set. Please create a .env file and add VITE_GEMINI_API_KEY=YOUR_API_KEY.");
     }
-    const ai = new GoogleGenAI({ apiKey: VITE_API_KEY });
+    const ai = new GoogleGenAI({ apiKey: VITE_GEMINI_API_KEY });
     
     const preCompositeImageUrl = await createPreCompositeImage(artworkFile, sceneFile, placementArea);
     const preCompositeFile = await dataUrlToFile(preCompositeImageUrl, 'composite.png', 'image/png');
@@ -160,11 +160,11 @@ Your final output must be a single, photorealistic image that perfectly integrat
 };
 
 export const editSceneWithPrompt = async (sceneFile: File, prompt: string) => {
-    const VITE_API_KEY = import.meta.env?.VITE_API_KEY;
-    if (!VITE_API_KEY || VITE_API_KEY === 'YOUR_API_KEY_HERE') {
-        throw new Error("VITE_API_KEY environment variable not set. Please create a .env file and add VITE_API_KEY=YOUR_API_KEY.");
+    const VITE_GEMINI_API_KEY = import.meta.env?.VITE_GEMINI_API_KEY;
+    if (!VITE_GEMINI_API_KEY || VITE_GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+        throw new Error("VITE_GEMINI_API_KEY environment variable not set. Please create a .env file and add VITE_GEMINI_API_KEY=YOUR_API_KEY.");
     }
-    const ai = new GoogleGenAI({ apiKey: VITE_API_KEY });
+    const ai = new GoogleGenAI({ apiKey: VITE_GEMINI_API_KEY });
     const scenePart = await fileToPart(sceneFile);
 
     const fullPrompt = `You are an expert photo editor. Edit the following image based on this instruction: "${prompt}". Your output must only be the edited image, with no text.`;
@@ -204,11 +204,11 @@ export const editSceneWithPrompt = async (sceneFile: File, prompt: string) => {
 };
 
 export const generateArtworkFromPrompt = async (prompt: string) => {
-    const VITE_API_KEY = import.meta.env?.VITE_API_KEY;
-    if (!VITE_API_KEY || VITE_API_KEY === 'YOUR_API_KEY_HERE') {
-        throw new Error("VITE_API_KEY environment variable not set. Please create a .env file and add VITE_API_KEY=YOUR_API_KEY.");
+    const VITE_GEMINI_API_KEY = import.meta.env?.VITE_GEMINI_API_KEY;
+    if (!VITE_GEMINI_API_KEY || VITE_GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+        throw new Error("VITE_GEMINI_API_KEY environment variable not set. Please create a .env file and add VITE_GEMINI_API_KEY=YOUR_API_KEY.");
     }
-    const ai = new GoogleGenAI({ apiKey: VITE_API_KEY });
+    const ai = new GoogleGenAI({ apiKey: VITE_GEMINI_API_KEY });
 
     const response = await ai.models.generateImages({
         model: 'imagen-4.0-generate-001',

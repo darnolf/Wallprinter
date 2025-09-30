@@ -18,7 +18,7 @@ import SceneEditPreviewModal from './components/SceneEditPreviewModal';
 import { Artwork, PlacementArea } from './types';
 import { generateMuralOnScene, editSceneWithPrompt } from './services/geminiService';
 
-const isGeminiConfigured = import.meta.env?.VITE_API_KEY && import.meta.env.VITE_API_KEY !== 'YOUR_API_KEY_HERE';
+const isGeminiConfigured = import.meta.env?.VITE_GEMINI_API_KEY && import.meta.env.VITE_GEMINI_API_KEY !== 'YOUR_API_KEY_HERE';
 
 function App() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
@@ -417,7 +417,7 @@ function App() {
                         </button>
                         {!isGeminiConfigured && (
                           <div className="text-xs text-center p-2 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 rounded-md">
-                            Generation is disabled. Please add <code>VITE_API_KEY</code> to your <code>.env</code> file.
+                            Generation is disabled. Please add <code>VITE_GEMINI_API_KEY</code> to your <code>.env</code> file.
                           </div>
                         )}
                   </div>

@@ -30,7 +30,7 @@ const SceneEditor: React.FC<SceneEditorProps> = ({ isEditing, onApplyEdit, isCon
                         Scene editing is disabled.
                     </p>
                     <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
-                        To enable it, please add your Gemini API key as <code>VITE_API_KEY</code> in a <code>.env</code> file.
+                        To enable it, please add your Gemini API key as <code>VITE_GEMINI_API_KEY</code> in a <code>.env</code> file.
                     </p>
                 </div>
             </div>

@@ -58,8 +58,8 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
   const VITE_PEXELS_API_KEY = import.meta.env?.VITE_PEXELS_API_KEY;
   const isPexelsConfigured = VITE_PEXELS_API_KEY && VITE_PEXELS_API_KEY !== 'YOUR_PEXELS_API_KEY_HERE';
 
-  const VITE_API_KEY = import.meta.env?.VITE_API_KEY;
-  const isGeminiConfigured = VITE_API_KEY && VITE_API_KEY !== 'YOUR_API_KEY_HERE';
+  const VITE_GEMINI_API_KEY = import.meta.env?.VITE_GEMINI_API_KEY;
+  const isGeminiConfigured = VITE_GEMINI_API_KEY && VITE_GEMINI_API_KEY !== 'YOUR_API_KEY_HERE';
 
   // Reset state when modal is opened/closed
   useEffect(() => {
@@ -287,7 +287,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
                             AI artwork generation is disabled.
                         </p>
                         <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
-                            To enable it, please add your Gemini API key as <code>VITE_API_KEY</code> in a <code>.env</code> file.
+                            To enable it, please add your Gemini API key as <code>VITE_GEMINI_API_KEY</code> in a <code>.env</code> file.
                         </p>
                     </div>
                 ) : (
