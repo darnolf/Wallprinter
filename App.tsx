@@ -49,7 +49,7 @@ function App() {
   const [isSceneEditorVisible, setIsSceneEditorVisible] = useState<boolean>(false);
 
   // Check for maintenance mode
-  const isMaintenanceMode = process.env.MAINTENANCE_MODE === 'true';
+  const isMaintenanceMode = process.env.VITE_MAINTENANCE_MODE === 'true';
 
   useEffect(() => {
     // Force dark theme
