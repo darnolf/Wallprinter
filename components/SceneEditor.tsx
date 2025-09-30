@@ -9,9 +9,10 @@ import Spinner from './Spinner';
 interface SceneEditorProps {
     isEditing: boolean;
     onApplyEdit: (prompt: string) => void;
+    isConfigured: boolean;
 }
 
-const SceneEditor: React.FC<SceneEditorProps> = ({ isEditing, onApplyEdit }) => {
+const SceneEditor: React.FC<SceneEditorProps> = ({ isEditing, onApplyEdit, isConfigured }) => {
     const [prompt, setPrompt] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -20,6 +21,21 @@ const SceneEditor: React.FC<SceneEditorProps> = ({ isEditing, onApplyEdit }) => 
             onApplyEdit(prompt.trim());
         }
     };
+
+    if (!isConfigured) {
+        return (
+            <div className="space-y-4 p-6 bg-zinc-100/80 dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                <div className="text-center p-4 bg-zinc-100 dark:bg-zinc-700/50 rounded-lg">
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                        Scene editing is disabled.
+                    </p>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
+                        To enable it, please add your Gemini API key as <code>VITE_API_KEY</code> in a <code>.env</code> file.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-4 p-6 bg-zinc-100/80 dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700">

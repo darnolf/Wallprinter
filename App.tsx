@@ -18,6 +18,8 @@ import SceneEditPreviewModal from './components/SceneEditPreviewModal';
 import { Artwork, PlacementArea } from './types';
 import { generateMuralOnScene, editSceneWithPrompt } from './services/geminiService';
 
+const isGeminiConfigured = import.meta.env?.VITE_API_KEY && import.meta.env.VITE_API_KEY !== 'YOUR_API_KEY_HERE';
+
 function App() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
@@ -49,7 +51,7 @@ function App() {
   const [isSceneEditorVisible, setIsSceneEditorVisible] = useState<boolean>(false);
 
   // Check for maintenance mode
-  const isMaintenanceMode = true;
+  const isMaintenanceMode = import.meta.env?.VITE_MAINTENANCE_MODE === 'true';
 
   useEffect(() => {
     // Force dark theme
@@ -118,7 +120,7 @@ function App() {
   };
   
   const handleApplySceneEdit = async (prompt: string) => {
-    if (!sceneImageFile || !prompt) return;
+    if (!sceneImageFile || !prompt || !isGeminiConfigured) return;
     setIsEditingScene(true);
     setSceneEditError(null);
     setIsEditPreviewModalOpen(true);
@@ -154,8 +156,8 @@ function App() {
 
 
   const handleGenerateClick = async () => {
-    if (!selectedArtwork || !sceneImageFile || !placementAreaPoints || placementAreaPoints.length < 3) {
-      setError('Please select an artwork, upload a scene, and define a placement area (at least 3 points).');
+    if (!selectedArtwork || !sceneImageFile || !placementAreaPoints || placementAreaPoints.length < 3 || !isGeminiConfigured) {
+      setError('Please select an artwork, upload a scene, and define a placement area (at least 3 points). Ensure your Gemini API Key is configured.');
       return;
     }
     setIsLoading(true);
@@ -364,7 +366,7 @@ function App() {
                   points={placementAreaPoints}
                   onAreaUpdate={handleAreaUpdate}
                 />
-                {sceneImageUrl && isSceneEditorVisible && <SceneEditor onApplyEdit={handleApplySceneEdit} isEditing={isEditingScene} />}
+                {sceneImageUrl && isSceneEditorVisible && <SceneEditor onApplyEdit={handleApplySceneEdit} isEditing={isEditingScene} isConfigured={isGeminiConfigured} />}
               </div>
               
               {/* Action Buttons Column */}
@@ -394,7 +396,7 @@ function App() {
                           </button>
                         <button
                           onClick={handleGenerateClick}
-                          disabled={isLoading || !placementAreaPoints || placementAreaPoints.length < 3}
+                          disabled={!isGeminiConfigured || isLoading || !placementAreaPoints || placementAreaPoints.length < 3}
                           className={`w-full font-semibold py-3 px-2 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-300 flex items-center justify-center gap-2 text-sm ${
                             isLoading
                               ? 'bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 text-white animate-gradient-pulse cursor-wait'
@@ -413,6 +415,11 @@ function App() {
                             '✨ Generate Image'
                           )}
                         </button>
+                        {!isGeminiConfigured && (
+                          <div className="text-xs text-center p-2 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 rounded-md">
+                            Generation is disabled. Please add <code>VITE_API_KEY</code> to your <code>.env</code> file.
+                          </div>
+                        )}
                   </div>
                 </div>
               )}

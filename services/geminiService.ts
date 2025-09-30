@@ -104,10 +104,11 @@ const createPreCompositeImage = async (artworkFile: File, sceneFile: File, place
 };
 
 export const generateMuralOnScene = async (artworkFile: File, sceneFile: File, placementArea: PlacementArea) => {
-    if (!process.env.API_KEY) {
-        throw new Error("API_KEY environment variable not set");
+    const VITE_API_KEY = import.meta.env?.VITE_API_KEY;
+    if (!VITE_API_KEY || VITE_API_KEY === 'YOUR_API_KEY_HERE') {
+        throw new Error("VITE_API_KEY environment variable not set. Please create a .env file and add VITE_API_KEY=YOUR_API_KEY.");
     }
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: VITE_API_KEY });
     
     const preCompositeImageUrl = await createPreCompositeImage(artworkFile, sceneFile, placementArea);
     const preCompositeFile = await dataUrlToFile(preCompositeImageUrl, 'composite.png', 'image/png');
@@ -159,10 +160,11 @@ Your final output must be a single, photorealistic image that perfectly integrat
 };
 
 export const editSceneWithPrompt = async (sceneFile: File, prompt: string) => {
-    if (!process.env.API_KEY) {
-        throw new Error("API_KEY environment variable not set");
+    const VITE_API_KEY = import.meta.env?.VITE_API_KEY;
+    if (!VITE_API_KEY || VITE_API_KEY === 'YOUR_API_KEY_HERE') {
+        throw new Error("VITE_API_KEY environment variable not set. Please create a .env file and add VITE_API_KEY=YOUR_API_KEY.");
     }
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: VITE_API_KEY });
     const scenePart = await fileToPart(sceneFile);
 
     const fullPrompt = `You are an expert photo editor. Edit the following image based on this instruction: "${prompt}". Your output must only be the edited image, with no text.`;
@@ -176,26 +178,37 @@ export const editSceneWithPrompt = async (sceneFile: File, prompt: string) => {
             ],
         },
         config: {
-            responseModalities: [Modality.IMAGE],
+            responseModalities: [Modality.IMAGE, Modality.TEXT],
         },
     });
 
-    const part = response.candidates[0].content.parts[0];
-    if (!part || !part.inlineData) {
+    let editedUrl: string | null = null;
+    let editedMimeType: string | null = null;
+    
+    for (const part of response.candidates[0].content.parts) {
+        if (part.inlineData) {
+            editedUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+            editedMimeType = part.inlineData.mimeType;
+            break;
+        }
+    }
+
+    if (!editedUrl || !editedMimeType) {
         throw new Error("Model did not return an edited image.");
     }
-    const { data, mimeType } = part.inlineData;
-    const editedUrl = `data:${mimeType};base64,${data}`;
-    const editedFile = await dataUrlToFile(editedUrl, 'edited-scene.png', mimeType);
+    
+    const editedFile = await dataUrlToFile(editedUrl, 'edited-scene.png', editedMimeType);
+
 
     return { editedFile, editedUrl };
 };
 
 export const generateArtworkFromPrompt = async (prompt: string) => {
-    if (!process.env.API_KEY) {
-        throw new Error("API_KEY environment variable not set");
+    const VITE_API_KEY = import.meta.env?.VITE_API_KEY;
+    if (!VITE_API_KEY || VITE_API_KEY === 'YOUR_API_KEY_HERE') {
+        throw new Error("VITE_API_KEY environment variable not set. Please create a .env file and add VITE_API_KEY=YOUR_API_KEY.");
     }
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: VITE_API_KEY });
 
     const response = await ai.models.generateImages({
         model: 'imagen-4.0-generate-001',

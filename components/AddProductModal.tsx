@@ -7,7 +7,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { generateArtworkFromPrompt } from '../services/geminiService';
 import { searchImages, PexelsImage } from '../services/imageSearchService';
 import Spinner from './Spinner';
-import { PEXELS_API_KEY } from '../env';
 
 interface AddProductModalProps {
   isOpen: boolean;
@@ -56,7 +55,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
   const [searchError, setSearchError] = useState<string | null>(null);
   const [selectedPexelsImage, setSelectedPexelsImage] = useState<PexelsImage | null>(null);
 
-  const isPexelsConfigured = PEXELS_API_KEY && PEXELS_API_KEY !== 'YOUR_PEXELS_API_KEY_HERE';
+  const VITE_PEXELS_API_KEY = import.meta.env?.VITE_PEXELS_API_KEY;
+  const isPexelsConfigured = VITE_PEXELS_API_KEY && VITE_PEXELS_API_KEY !== 'YOUR_PEXELS_API_KEY_HERE';
+
+  const VITE_API_KEY = import.meta.env?.VITE_API_KEY;
+  const isGeminiConfigured = VITE_API_KEY && VITE_API_KEY !== 'YOUR_API_KEY_HERE';
 
   // Reset state when modal is opened/closed
   useEffect(() => {
@@ -106,7 +109,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
   };
 
   const handleGenerateClick = async () => {
-    if (!generationPrompt.trim()) return;
+    if (!generationPrompt.trim() || !isGeminiConfigured) return;
 
     setIsGenerating(true);
     resetCommonErrors();
@@ -278,28 +281,41 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
             </div>
 
             <div className={activeTab === 'generate' ? 'block space-y-4' : 'hidden'} role="tabpanel">
-                <div>
-                    <label htmlFor="generationPrompt" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Describe the artwork you want to create
-                    </label>
-                    <textarea
-                        id="generationPrompt"
-                        value={generationPrompt}
-                        onChange={(e) => setGenerationPrompt(e.target.value)}
-                        className="w-full px-3 py-2 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="e.g., A vibrant oil painting of a futuristic city at sunset"
-                        rows={3}
-                    />
-                </div>
-                <button
-                    type="button"
-                    onClick={handleGenerateClick}
-                    disabled={isGenerating || !generationPrompt.trim()}
-                    className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                    {isGenerating ? <><Spinner /> Generating...</> : '✨ Generate Artwork'}
-                </button>
-                {generationError && <p className="text-sm text-red-600 animate-fade-in">{generationError}</p>}
+                {!isGeminiConfigured ? (
+                    <div className="text-center p-4 bg-zinc-100 dark:bg-zinc-700/50 rounded-lg">
+                        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                            AI artwork generation is disabled.
+                        </p>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
+                            To enable it, please add your Gemini API key as <code>VITE_API_KEY</code> in a <code>.env</code> file.
+                        </p>
+                    </div>
+                ) : (
+                    <>
+                        <div>
+                            <label htmlFor="generationPrompt" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            Describe the artwork you want to create
+                            </label>
+                            <textarea
+                                id="generationPrompt"
+                                value={generationPrompt}
+                                onChange={(e) => setGenerationPrompt(e.target.value)}
+                                className="w-full px-3 py-2 bg-white dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="e.g., A vibrant oil painting of a futuristic city at sunset"
+                                rows={3}
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleGenerateClick}
+                            disabled={isGenerating || !generationPrompt.trim()}
+                            className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        >
+                            {isGenerating ? <><Spinner /> Generating...</> : '✨ Generate Artwork'}
+                        </button>
+                        {generationError && <p className="text-sm text-red-600 animate-fade-in">{generationError}</p>}
+                    </>
+                )}
             </div>
 
             <div className={activeTab === 'search' ? 'block space-y-4' : 'hidden'} role="tabpanel">
@@ -309,7 +325,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onAd
                             The image search feature is disabled.
                         </p>
                         <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
-                            To enable it, please add your Pexels API key to the <code>env.ts</code> file.
+                            To enable it, please add your Pexels API key as <code>VITE_PEXELS_API_KEY</code> in a <code>.env</code> file.
                         </p>
                     </div>
                 ) : (
