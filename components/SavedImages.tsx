@@ -36,9 +36,9 @@ const SavedImages: React.FC<SavedImagesProps> = ({ images, onDelete, onImageClic
     }
 
   return (
-    <div className="mt-16 pt-8 border-t border-zinc-200 dark:border-zinc-700">
-        <h2 className="text-2xl font-bold text-zinc-800 dark:text-zinc-200 mb-6">Saved Images</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-700">
+        <h3 className="text-xl font-semibold text-zinc-800 dark:text-zinc-200 mb-6">Saved Images</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2 gap-4">
             {images.map((image, index) => (
                 <div key={image.id} className="group relative rounded-lg overflow-hidden shadow-md bg-zinc-100 dark:bg-zinc-800 aspect-square">
                     <button onClick={() => onImageClick(index)} className="w-full h-full" aria-label={`View larger image for ${image.name}`}>

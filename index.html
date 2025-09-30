@@ -69,10 +69,19 @@ body {
     stroke-width: 20; /* Large invisible clickable area */
     cursor: copy;
 }
+@keyframes gradient-pulse {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-pulse {
+    background-size: 200% 200%;
+    animation: gradient-pulse 3s ease infinite;
+}
 </style>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-white text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
+  <body class="bg-white text-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

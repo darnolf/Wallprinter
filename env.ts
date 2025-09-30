@@ -8,4 +8,4 @@
 // FIX: Reverted the Pexels API key to its placeholder value to resolve TypeScript comparison errors
 // and remove a hardcoded secret from version control.
 // FIX: Reverted the PEXELS_API_KEY to its placeholder value to fix TypeScript comparison errors and remove a hardcoded secret.
-export const PEXELS_API_KEY = "jFQA9msKq4zxcK30BAtBDu3MbPzoAIZR8V5qocGWSTmE1k6pNEeVvFbJ";
+export const PEXELS_API_KEY = "YOUR_PEXELS_API_KEY_HERE";

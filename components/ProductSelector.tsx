@@ -26,8 +26,8 @@ const PlusIcon: React.FC = () => (
 const ProductSelector: React.FC<ProductSelectorProps> = ({ artworks, selectedArtwork, onArtworkSelect, onAddArtworkClick, onDragStart, onTouchStart, onArtworkDelete }) => {
   return (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">Step 1: Choose an Artwork</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-4">
+      <h3 className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">1: Artwork</h3>
+      <div className="grid grid-cols-1 gap-4">
         {artworks.map(artwork => (
           <ObjectCard
             key={artwork.id}

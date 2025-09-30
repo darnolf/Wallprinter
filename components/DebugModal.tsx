@@ -53,9 +53,9 @@ const DebugModal: React.FC<DebugModalProps> = ({ isOpen, onClose, imageUrl, prom
         
         <div className="flex flex-col gap-4 overflow-y-auto">
           <div>
-            <p className="text-zinc-600 dark:text-zinc-400 mb-2">This is the image sent to the AI, showing the semi-transparent magenta area to be filled.</p>
+            <p className="text-zinc-600 dark:text-zinc-400 mb-2">This is the crude pre-composite image sent to the AI. It defines the exact boundaries for the artwork.</p>
             <div className="rounded-lg overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-                <img src={imageUrl} alt="Debug view of marked scene" className="w-full h-full object-contain" />
+                <img src={imageUrl} alt="Debug view of the pre-composite image" className="w-full h-full object-contain" />
             </div>
           </div>
           

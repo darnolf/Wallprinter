@@ -195,10 +195,10 @@ const ImageUploader = forwardRef<HTMLDivElement, ImageUploaderProps>(({ id, labe
   };
 
   return (
-    <div ref={containerRef} className="space-y-4" data-dropzone-id={id}>
-      <h3 className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">{label}</h3>
+    <div ref={containerRef} className="h-full flex flex-col" data-dropzone-id={id}>
+      <h3 className="text-xl font-semibold text-zinc-700 dark:text-zinc-300 mb-4 flex-shrink-0">{label}</h3>
       <div
-        className="w-full aspect-video bg-zinc-100 dark:bg-zinc-800 border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg flex items-center justify-center relative overflow-hidden transition-colors duration-300 select-none"
+        className="w-full flex-grow min-h-0 bg-zinc-100 dark:bg-zinc-800 border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-lg flex items-center justify-center relative overflow-hidden transition-colors duration-300 select-none"
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -213,10 +213,6 @@ const ImageUploader = forwardRef<HTMLDivElement, ImageUploaderProps>(({ id, labe
               alt="Scene"
               className="max-w-full max-h-full object-contain pointer-events-none"
               onLoad={handleImageLoad}
-              style={{
-                  width: '100%',
-                  height: '100%',
-              }}
             />
             {isEditableArea && (
               <svg
