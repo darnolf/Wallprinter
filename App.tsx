@@ -48,6 +48,9 @@ function App() {
   const [isEditPreviewModalOpen, setIsEditPreviewModalOpen] = useState<boolean>(false);
   const [isSceneEditorVisible, setIsSceneEditorVisible] = useState<boolean>(false);
 
+  // Check for maintenance mode
+  const isMaintenanceMode = process.env.MAINTENANCE_MODE === 'true';
+
   useEffect(() => {
     // Force dark theme
     document.documentElement.classList.add('dark');
@@ -307,6 +310,22 @@ function App() {
     setViewerStartIndex(index);
     setIsImageViewerOpen(true);
   };
+
+  if (isMaintenanceMode) {
+    return (
+      <div className="bg-zinc-900 min-h-screen font-sans flex flex-col items-center justify-center text-zinc-300">
+        <div className="container mx-auto px-4 pt-8">
+          <Header />
+        </div>
+        <div className="flex-grow flex items-center justify-center -mt-24">
+          <div className="text-center p-8">
+            <h2 className="text-2xl text-zinc-400">Our site is currently undergoing scheduled maintenance.</h2>
+            <p className="text-lg text-zinc-500 mt-2">We'll be back shortly. Thank you for your patience!</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-zinc-50 dark:bg-zinc-900 min-h-screen font-sans flex flex-col" onDrop={handleDrop} onDragOver={(e) => e.preventDefault()}>
